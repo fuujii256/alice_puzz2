@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5600767476167972686}
   - component: {fileID: 5600767476167972687}
-  - component: {fileID: 5600767476167972672}
   - component: {fileID: 5600767476167972673}
+  - component: {fileID: 5600767476167972672}
   - component: {fileID: 7328098966458660593}
   m_Layer: 0
   m_Name: Block_3
@@ -85,32 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &5600767476167972672
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5600767476167972684}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.46, y: 2.47}
-    newSize: {x: 2.46, y: 2.47}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.46, y: 2.47}
-  m_EdgeRadius: 0
 --- !u!50 &5600767476167972673
 Rigidbody2D:
   serializedVersion: 4
@@ -126,12 +100,38 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0
-  m_GravityScale: 1
+  m_GravityScale: 0.5
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!61 &5600767476167972672
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5600767476167972684}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.02044332, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.46, y: 2.47}
+    newSize: {x: 2.46, y: 2.47}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.8303478, y: 2.47}
+  m_EdgeRadius: 0
 --- !u!114 &7328098966458660593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,3 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b07fe01ef4addb44808a5e05e2ee907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player_control: 0
+  player_freeze: 0
+  isFalling: 1
+  y: 0

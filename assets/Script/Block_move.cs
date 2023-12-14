@@ -5,27 +5,30 @@ using UnityEngine;
 public class Block_move : MonoBehaviour
 {
     Rigidbody2D rbody;
-    bool player_control = true;  
+    public bool player_control;
+    public bool player_freeze;  
     int axisH_old = 0;
-    bool isFalling = true;
+    public bool isFalling = true;
+    public float y;
     // Start is called before the first frame update
     void Start()
     {
         //Rigidbodyを取得
         rbody = this.GetComponent<Rigidbody2D>();
- 
+
+
         //FreezePositionXをオンにする
         rbody.constraints = RigidbodyConstraints2D.FreezePositionX; 
         rbody.constraints = RigidbodyConstraints2D.FreezeRotation; 
 
-          
-
+        player_control = true;   //初期のみ操作可能  
+        player_freeze = false;
     }
 
     // Update is called once per frame
     void Update()
     {        
-        if (player_control == true)
+        if (player_control == true )
         {
             Vector3 pos = this.transform.position;
             int axisH =(int)Input.GetAxisRaw("Horizontal");
@@ -42,12 +45,11 @@ public class Block_move : MonoBehaviour
             }
             this.transform.position = pos;
             axisH_old = axisH;
-        }
-        //落下中か？
-        isFalling = rbody.velocity.y < 0.0f;  
-        if (isFalling ==false)
-        {
-            player_control = false;         //落下中以外は操作できない
-        }      
+        }           
+    }
+    //衝突した時に、一度だけ実行する
+    void OnCollisionEnter2D(Collision2D coll) 
+    {
+        player_control = false;
     }
 }

@@ -33,10 +33,10 @@ public class GameManager : MonoBehaviour
         game_Time_Cnt += Time.deltaTime;
 
 
-        if (game_Time_Cnt > 1.0f )
+        if (game_Time_Cnt > 3.0f )
         {
             //ブロックの新規生成
-            int rnd = Random.Range(1, 5);
+            int rnd = Random.Range(1, 6);
             float x = -3.76f;
             float y = 3.24f;
             float z = 0.0f;
