@@ -1,0 +1,47 @@
+if (player_control == true )
+        {
+            Vector3 pos = this.transform.position;
+
+            int speed = 5;
+            axisH =(int)Input.GetAxisRaw("Horizontal");
+            axisV =(int)Input.GetAxisRaw ("Vertical");
+
+            if(axisH_old != axisH)
+            {
+            movePosition = pos;
+            if (axisH == -1 && pos.x > -5.5f)
+                {
+                    movePosition.x = pos.x -0.25f;
+                    moveButtonJudge = true;
+                }
+                if(axisH == 1  && pos.x < -1.5f)
+                {
+                    movePosition.x = pos.x + 0.25f;
+                    moveButtonJudge = true;
+                }
+            }
+
+            if(axisV_old != axisV)
+            {
+                if (axisV == -1)
+                    {
+                        rbody.drag = 0;             //下ボタンが押されたら、強制落下
+                        Vector3 force = new Vector3 (0.0f,-200.0f,0.0f);    // 力を設定
+                        rbody.AddForce (force);         // 力を加える
+                        player_control = false;         //コントロールを不可にする
+                    }
+                    
+            }
+
+            pos = Vector3.MoveTowards(pos,movePosition, speed * Time.deltaTime);   
+            //移動開始(playerオブジェクトが, 目的地に移動, 移動速度)
+
+            //指定した場所にオブジェクトが移動すると、再度移動が可能になる
+            if (pos == movePosition) moveButtonJudge = false;
+
+            //this.transform.position = pos;
+            axisH_old = axisH;
+            axisV_old = axisV;
+        }     
+          
+    }
