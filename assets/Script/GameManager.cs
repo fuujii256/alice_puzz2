@@ -12,15 +12,17 @@ public class GameManager : MonoBehaviour
     //public GameObject Block_6;
     //public GameObject Block_SP;
     private GameObject block; 
-    float game_Time = 0.0f;
-    float game_Time_Cnt = 0.0f;
+    //float game_Time = 0.0f;
+    //float game_Time_Cnt = 0.0f;
 
     int axisV;
     int axisV_old;
 
     bool ini_block = true;   //ゲームスタート時、true の時は初期ブロックを強制生成
 
-    static public int [,] block_matrix = new int [14,9]{
+    static public int Advent_num = 0;  //新規生成するブロックの背番号
+    static public int [,] block_matrix = new int [15,9]{
+        {0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0},
@@ -62,9 +64,13 @@ public class GameManager : MonoBehaviour
         {
             ini_block = false;
             //ブロックの新規生成
+        
+            
             int i = 0;
-            while(i<2)
+            while(i<1)    //同時生成するブロックの数
             {
+                Advent_num++;  //生成するブロックの背番号を更新する
+                Advent_num = Advent_num%255;   //0～２５５の範囲で
 
                 int rnd = Random.Range(1, 5);
                 float x = -3.5f+ i*0.5f;
@@ -94,7 +100,7 @@ public class GameManager : MonoBehaviour
                 }   
                 block = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0));
                 Block_move component = block.AddComponent<Block_move>();
-                component.advent_no = i;    //出現させるのは何個目のブロックか指定する  
+                component.advent_no = Advent_num;    //出現させるのは何個目のブロックか指定する  
             
            
                 i++; 

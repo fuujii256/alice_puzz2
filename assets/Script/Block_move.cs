@@ -13,6 +13,11 @@ public class Block_move : MonoBehaviour
     int axisH_old = 0;
     int axisV_old = 0;
 
+    int mat_x;
+    int mat_y;
+    int old_mat_x;
+    int old_mat_y;
+
      public bool moveButtonJudge = false;  
     Vector3 movePosition;
     
@@ -33,38 +38,43 @@ public class Block_move : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {   
         Vector3 pos = this.transform.position;
 
-        //float temp_x = (pos.x +5.5f)/0.25f; 
-        //int mat_x = (int)temp_x;
-        //float temp_y = (pos.y +3.54f)/0.25f;
-        //int mat_y = (int)temp_y;
-        //if (mat_x > 9) {
-        //    mat_x = 9;
-        //}
-        //if (mat_y > 14) {
-        //    mat_y = 14;
-        //}
-        //GameManager.block_matrix [mat_y,mat_x] = 1; 
+        float temp_x = (pos.x +5.5f)/0.5f; 
+        mat_x = (int)temp_x;
+        float temp_y = 14- (pos.y +3.53f)/0.5f;
+        mat_y = (int)temp_y;
         
+        //Debug.Log("x:"+mat_x+" y:"+mat_y);
+        GameManager.block_matrix [old_mat_y,old_mat_x] = 0;
+        GameManager.block_matrix [mat_y,mat_x] = advent_no;    //ブロックマトリクスに自分の番号を記録する 
+        old_mat_x= mat_x;
+        old_mat_y= mat_y;
+
         if (player_control == true )
         {
-            int speed = 5;
+            //int speed = 5;
             axisH =(int)Input.GetAxisRaw("Horizontal");
             axisV =(int)Input.GetAxisRaw ("Vertical");
 
             if(axisH_old != axisH)
             {
             movePosition = pos;
-            if (axisH == -1 && pos.x > -5.5f)
+            //if (axisH == -1 && pos.x > -5.5f )
+            if (axisH == -1 && pos.x > -5.5f && GameManager.block_matrix [mat_y,mat_x -1] ==0)
                 {
                     transform.Translate (-0.25f, 0, 0);
+                    //rbody.velocity = new Vector2(-0.25f,0);
+
                 }
-                if(axisH == 1  && pos.x < -1.5f)
+                //if (axisH == 1  && pos.x < -1.5f )
+                if (axisH == 1  && pos.x < -1.5f && GameManager.block_matrix [mat_y,mat_x +1] ==0)
+                
                 {
                     transform.Translate ( 0.25f, 0, 0);
+                    //rbody.velocity = new Vector2(0.25f,0);
                 }
             }
 
