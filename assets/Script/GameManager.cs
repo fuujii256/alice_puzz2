@@ -4,19 +4,38 @@ using UnityEngine;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
-    public GameObject Block_1;
-    public GameObject Block_2;
-    public GameObject Block_3;
-    public GameObject Block_4;
-    public GameObject Block_5;
-    public GameObject Block_6;
-    public GameObject Block_SP; 
+    //public GameObject Block_1;
+    //public GameObject Block_2;
+    //public GameObject Block_3;
+    //public GameObject Block_4;
+    //public GameObject Block_5;
+    //public GameObject Block_6;
+    //public GameObject Block_SP;
+    private GameObject block; 
     float game_Time = 0.0f;
     float game_Time_Cnt = 0.0f;
 
     int axisV;
-
     int axisV_old;
+
+    bool ini_block = true;   //ゲームスタート時、true の時は初期ブロックを強制生成
+
+    static public int [,] block_matrix = new int [14,9]{
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0},
+    }; 
 
     // Start is called before the first frame update
     void Start()
@@ -39,8 +58,9 @@ public class GameManager : MonoBehaviour
 
         //axisV =(int)Input.GetKeyDown("Vertical");
         
-        if ( Input.GetKeyDown(KeyCode.Return))
+        if ( ini_block || Input.GetKeyDown(KeyCode.Return))
         {
+            ini_block = false;
             //ブロックの新規生成
             int i = 0;
             while(i<2)
@@ -72,19 +92,40 @@ public class GameManager : MonoBehaviour
                         new_instance = block_5_Prefab;
                         break;
                 }   
-                GameObject instance = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0))as GameObject;
-                Block_move component = instance.AddComponent<Block_move>();
+                block = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0));
+                Block_move component = block.AddComponent<Block_move>();
                 component.advent_no = i;    //出現させるのは何個目のブロックか指定する  
             
            
                 i++; 
             }     
+
+            
             //game_Time += game_Time_Cnt;
             //game_Time_Cnt = 0.0f;
              //SaxisV_old = axisV;
         }
 
-        
+        if (block.GetComponent<Rigidbody2D>().IsSleeping()) {
+                //Debug.Log(block_matrix.ToString());
+                //Debug.Log("sleeping...");
+            }
+            else
+            {
+                //Debug.Log("block mooving");
+            }
+
+        if ( Input.GetKeyDown(KeyCode.Space)) {
+            for (int i = 0;i < block_matrix.GetLength(0);i++)
+            {                
+                string str = "";
+                for (int j = 0; j < block_matrix.GetLength(1); j++)
+                {
+                    str = str + block_matrix[i, j] + " ";
+                }
+                Debug.Log(str);
+            }
+        }       
 
     }
 }

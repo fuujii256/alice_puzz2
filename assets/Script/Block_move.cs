@@ -34,11 +34,23 @@ public class Block_move : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
+    {   
+        Vector3 pos = this.transform.position;
+
+        //float temp_x = (pos.x +5.5f)/0.25f; 
+        //int mat_x = (int)temp_x;
+        //float temp_y = (pos.y +3.54f)/0.25f;
+        //int mat_y = (int)temp_y;
+        //if (mat_x > 9) {
+        //    mat_x = 9;
+        //}
+        //if (mat_y > 14) {
+        //    mat_y = 14;
+        //}
+        //GameManager.block_matrix [mat_y,mat_x] = 1; 
+        
         if (player_control == true )
         {
-            Vector3 pos = this.transform.position;
-
             int speed = 5;
             axisH =(int)Input.GetAxisRaw("Horizontal");
             axisV =(int)Input.GetAxisRaw ("Vertical");
