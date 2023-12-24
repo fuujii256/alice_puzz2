@@ -8,7 +8,7 @@ public class Block_move : MonoBehaviour
     public int advent_no;
     public int axisH;
     public int axisV;
-    public bool player_control;
+    public bool rakka = false;   //落下モードの場合はtrue
     public bool player_freeze;  
     int axisH_old = 0;
     int axisV_old = 0;
@@ -17,7 +17,7 @@ public class Block_move : MonoBehaviour
     int mat_y;
     int old_mat_x;
     int old_mat_y;
-
+    public bool seishi = false;   //このオブジェクトが静止しているか
      public bool moveButtonJudge = false;  
     Vector3 movePosition;
     
@@ -31,9 +31,6 @@ public class Block_move : MonoBehaviour
         //FreezePositionXをオンにする
         rbody.constraints = RigidbodyConstraints2D.FreezePositionX; 
         rbody.constraints = RigidbodyConstraints2D.FreezeRotation; 
-
-        player_control = true;   //初期のみ操作可能  
-        player_freeze = false;
        
     }
 
@@ -42,9 +39,9 @@ public class Block_move : MonoBehaviour
     {   
         Vector3 pos = this.transform.position;
 
-        float temp_x = (pos.x +5.5f)/0.5f; 
+        float temp_x = (pos.x +5.00f)/0.75f +1.0f;  //ブロックマトリクスの自分の座標を計算 
         mat_x = (int)temp_x;
-        float temp_y = 14- (pos.y +3.53f)/0.5f;
+        float temp_y = 10- (pos.y +4.175f)/0.75f;
         mat_y = (int)temp_y;
         
         //Debug.Log("x:"+mat_x+" y:"+mat_y);
@@ -53,52 +50,60 @@ public class Block_move : MonoBehaviour
         old_mat_x= mat_x;
         old_mat_y= mat_y;
 
-        if (player_control == true )
-        {
-            //int speed = 5;
-            axisH =(int)Input.GetAxisRaw("Horizontal");
-            axisV =(int)Input.GetAxisRaw ("Vertical");
+        //if (player_control == true )
+        //{
+            ////int speed = 5;
+            //axisH =(int)Input.GetAxisRaw("Horizontal");
+            //axisV =(int)Input.GetAxisRaw ("Vertical");
 
-            if(axisH_old != axisH)
-            {
-            movePosition = pos;
-            //if (axisH == -1 && pos.x > -5.5f )
-            if (axisH == -1 && pos.x > -5.5f && GameManager.block_matrix [mat_y,mat_x -1] ==0)
-                {
-                    transform.Translate (-0.25f, 0, 0);
-                    //rbody.velocity = new Vector2(-0.25f,0);
+            //if(axisH_old != axisH)
+            //{
+            //movePosition = pos;
+            ////if (axisH == -1 && pos.x > -5.5f )
+            //if (axisH == -1 && pos.x > -5.5f && GameManager.block_matrix [mat_y,mat_x -1] ==0)
+            //    {
+            //        transform.Translate (-0.25f, 0, 0);
+            //        //rbody.velocity = new Vector2(-0.25f,0);
 
-                }
-                //if (axisH == 1  && pos.x < -1.5f )
-                if (axisH == 1  && pos.x < -1.5f && GameManager.block_matrix [mat_y,mat_x +1] ==0)
+            //    }
+            //    //if (axisH == 1  && pos.x < -1.5f )
+            //    if (axisH == 1  && pos.x < -1.5f && GameManager.block_matrix [mat_y,mat_x +1] ==0)
                 
-                {
-                    transform.Translate ( 0.25f, 0, 0);
-                    //rbody.velocity = new Vector2(0.25f,0);
-                }
-            }
+            //    {
+            //        transform.Translate ( 0.25f, 0, 0);
+            //        //rbody.velocity = new Vector2(0.25f,0);
+            //    }
+            //}
 
-            if(axisV_old != axisV)
-            {
-                if (axisV == -1)
-                    {
-                        rbody.drag = 0;             //下ボタンが押されたら、強制落下
-                        Vector3 force = new Vector3 (0.0f,-200.0f,0.0f);    // 力を設定
-                        rbody.AddForce (force);         // 力を加える
-                        player_control = false;         //コントロールを不可にする
-                    }
-                    
-            }
+        if (rakka == true)      //落下モードへ移行する指示があった場合、下方向へ力を加える
+        {
+            rakka = false; 
+            rbody.drag = 0;             //下ボタンが押されたら、強制落下
+            Vector3 force = new Vector3 (0.0f,-400.0f,0.0f);    // 力を設定
+            rbody.AddForce (force);         // 力を加える
+  
+        }
 
-            //this.transform.position = pos;
-            axisH_old = axisH;
-            axisV_old = axisV;
-        }     
+        //静止判定
+        if (GetComponent<Rigidbody2D>().IsSleeping()) {
+            seishi = true;
+        }
+        else {
+            seishi = false;
+        }            
+            //}
+
+            ////this.transform.position = pos;
+            //axisH_old = axisH;
+            //axisV_old = axisV;
+        //}     
           
     }
     //衝突した時に、一度だけ実行する
     void OnCollisionEnter2D(Collision2D coll) 
     {
-        player_control = false;
+        GameManager.player_control = false;
+        GameManager.trigger =1; 
+        Debug.Log("GameManager.trigger:"+GameManager.trigger);              //　衝突判定開始フラグをたてる
     }
 }
