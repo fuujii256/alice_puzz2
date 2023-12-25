@@ -5,10 +5,10 @@ using UnityEngine.UI;
  
 public class GameManager : MonoBehaviour
 {
-    //public GameObject Block_1;
-    //public GameObject Block_2;
-    //public GameObject Block_3;
-    //public GameObject Block_4;
+    public GameObject UnderWall;
+    public GameObject GameOver;
+    public GameObject start_text;
+    public GameObject go_title;
     //public GameObject Block_5;
     //public GameObject Block_6;
     //public GameObject Block_SP;
@@ -67,8 +67,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-    
+        GameOver.SetActive(false);  //ゲームオーバー文字を消す
+        go_title.SetActive(false);  //タイトル画面へ戻るボタンを消す
 
+        Invoke("InactiveImage",3.0f);
     }
 
     // Update is called once per frame  
@@ -85,7 +87,7 @@ public class GameManager : MonoBehaviour
 
         //axisV =(int)Input.GetKeyDown("Vertical");
         
-        if ( ini_block || Input.GetKeyDown(KeyCode.Return))
+        if ( ini_block )
         {
             ini_block = false;  //初期ブロック出力完了
             trigger = 0 ;       //消去判定用トリガーを初期化
@@ -121,14 +123,23 @@ public class GameManager : MonoBehaviour
                         new_instance = block_5_Prefab;
                         break;
                 }   
-                block = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0));
-                Block_move component = block.AddComponent<Block_move>();
-                component.advent_no = Advent_num;    //出現させるのは何個目のブロックか
-                component.advent_type = rnd +1;    //出現させるブロックの種類  
-            
-                blockList.Add(block);
-                player_control = true;
 
+                if (block_matrix[0,3] == 0)
+                {
+                    block = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0));
+                    Block_move component = block.AddComponent<Block_move>();
+                    component.advent_no = Advent_num;    //出現させるのは何個目のブロックか
+                    component.advent_type = rnd +1;    //出現させるブロックの種類  
+            
+                    blockList.Add(block);
+                    player_control = true;
+                }
+                else
+                {
+                    trigger =5;             //出現位置に既にブロックがあったら、ゲームオーバー処理へ
+                    temp_cnt = 250;
+                    Physics.gravity = new Vector3(0, -10, 0);  //重力を加える
+                }
                 i++; 
             }     
             
@@ -202,7 +213,7 @@ public class GameManager : MonoBehaviour
             if (all_seishi == true)
                 {
                     trigger = 2;
-                    temp_cnt=50;            //ブロックが静止してからの待機時間
+                    temp_cnt=10;            //ブロックが静止してからの待機時間
                     //Debug.Log("trigger:"+trigger);
                 }
     
@@ -330,12 +341,15 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                trigger = 0;            //もう消去可能なブロックがなければ、通常処理へ
+                //ブロック消去ルーチン完了時の処理 
+                trigger = 0;  //もう消去可能なブロックがなければ、通常処理へ 
             }
+
+            
 
             deleteList.Clear();         //消去処理が完了したら、リストをクリアする
             trigger = 4; 
-            temp_cnt = 50;               //消去後はしばらく休止
+            temp_cnt = 30;               //消去後はしばらく休止
         }
 
         if (trigger == 4)           //ブロック消去チェック後は小休止
@@ -344,6 +358,20 @@ public class GameManager : MonoBehaviour
             if (temp_cnt <= 0) {
                 ini_block = true;
                 trigger = 1;            //もう一度全数静止チェックからやり直す
+            }
+
+        }
+
+        if (trigger == 5)           //**ゲームオーバー
+        {
+            UnderWall.SetActive(false);  //床を抜く
+            GameOver.SetActive(true);  //ゲームオーバー文字を表示
+            go_title.SetActive(true);   //タイトル画面へ戻るボタンを表示
+
+            temp_cnt--;
+            if (temp_cnt <= 0) {
+                ini_block = true;
+                //trigger = 1;            //もう一度全数静止チェックからやり直す
             }
 
         }
@@ -383,5 +411,9 @@ public class GameManager : MonoBehaviour
             
         }       
 
+    }
+    void InactiveImage()
+    {
+        start_text.SetActive(false);
     }
 }
