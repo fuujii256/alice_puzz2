@@ -47,6 +47,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
@@ -58,17 +62,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12182}
     - Class: 114
-      Script: {instanceID: 12892}
+      Script: {instanceID: 12270}
     - Class: 114
-      Script: {instanceID: 13572}
+      Script: {instanceID: 12894}
     - Class: 114
-      Script: {instanceID: 13670}
+      Script: {instanceID: 13574}
     - Class: 114
-      Script: {instanceID: 14486}
+      Script: {instanceID: 13672}
     - Class: 114
-      Script: {instanceID: 15122}
+      Script: {instanceID: 14488}
     - Class: 114
-      Script: {instanceID: 15138}
+      Script: {instanceID: 15124}
+    - Class: 114
+      Script: {instanceID: 15140}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -106,6 +112,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
@@ -117,15 +127,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12182}
     - Class: 114
-      Script: {instanceID: 12892}
+      Script: {instanceID: 12270}
     - Class: 114
-      Script: {instanceID: 13670}
+      Script: {instanceID: 12894}
     - Class: 114
-      Script: {instanceID: 14486}
+      Script: {instanceID: 13672}
     - Class: 114
-      Script: {instanceID: 15122}
+      Script: {instanceID: 14488}
     - Class: 114
-      Script: {instanceID: 16370}
+      Script: {instanceID: 15124}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -247,6 +257,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_InputField
+  - hash:
+      serializedVersion: 2
+      Hash: d91fcd9ac7bd86d3d771dd6171620fad
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ChangeScene
   - hash:
       serializedVersion: 2
       Hash: 7ab0e790220bdca831fdd886b339039d
@@ -609,7 +625,7 @@ ScriptsOnlyBuild:
     className: StandaloneInputModule
   - hash:
       serializedVersion: 2
-      Hash: 32156d45bfde88e9b26f211a2776593a
+      Hash: e176e9a8e157119661166a9ceb97299f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -643,12 +659,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: d91fcd9ac7bd86d3d771dd6171620fad
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: ChangeScene
   platform: 5
   scenePathNames:
   - Assets/Scenes/title.unity

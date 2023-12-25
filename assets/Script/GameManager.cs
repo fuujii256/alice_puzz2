@@ -11,7 +11,11 @@ public class GameManager : MonoBehaviour
     public GameObject go_title;
     public GameObject scoreText;
     public GameObject hi_scoreText;
-    //public GameObject Block_SP;
+
+    public AudioClip meGameStart;
+    public AudioClip meGamePlaying;
+    public AudioClip meGameOver;
+
     private GameObject block; 
 
     //float game_Time = 0.0f;
@@ -80,6 +84,13 @@ public class GameManager : MonoBehaviour
         scoreText.GetComponent<Text>().text = score.ToString();
         hi_scoreText.GetComponent<Text>().text = hi_score.ToString();
 
+        AudioSource soundPlayer = GetComponent<AudioSource>();
+        if(soundPlayer != null)
+        {
+            soundPlayer.Stop();
+            soundPlayer.PlayOneShot(meGameStart);
+            soundPlayer.PlayOneShot(meGamePlaying);
+        }
         
         Invoke("InactiveImage",2.0f);
     }
@@ -147,8 +158,12 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    trigger =5;             //出現位置に既にブロックがあったら、ゲームオーバー処理へ
-                    temp_cnt = 250;
+                    trigger = 5;             //出現位置に既にブロックがあったら、ゲームオーバー処理へ
+                
+                    AudioSource soundPlayer = GetComponent<AudioSource>();
+                    soundPlayer.Stop();
+                    soundPlayer.PlayOneShot(meGameOver);
+                
                     Physics.gravity = new Vector3(0, -10, 0);  //重力を加える
                 }
                 i++; 
