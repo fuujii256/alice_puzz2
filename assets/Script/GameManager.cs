@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour
     public GameObject GameOver;
     public GameObject start_text;
     public GameObject go_title;
-    //public GameObject Block_5;
-    //public GameObject Block_6;
+    public GameObject scoreText;
+    public GameObject hi_scoreText;
     //public GameObject Block_SP;
     private GameObject block; 
 
@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     int temp_cnt;
     float temp_x;
     float temp_y;
+
+    public static int hi_score;
+    public int score = 0;
     
     static public int Advent_num = 0;  //新規生成するブロックの背番号 0:wall 1:None 2:～ブロック
     
@@ -69,8 +72,16 @@ public class GameManager : MonoBehaviour
     {
         GameOver.SetActive(false);  //ゲームオーバー文字を消す
         go_title.SetActive(false);  //タイトル画面へ戻るボタンを消す
+        
+        if (hi_score == 0)
+        {
+            hi_score = 100;  //ハイスコアの初期値
+        }        
+        scoreText.GetComponent<Text>().text = score.ToString();
+        hi_scoreText.GetComponent<Text>().text = hi_score.ToString();
 
-        Invoke("InactiveImage",3.0f);
+        
+        Invoke("InactiveImage",2.0f);
     }
 
     // Update is called once per frame  
@@ -249,6 +260,8 @@ public class GameManager : MonoBehaviour
 
                     {
                         Debug.Log("height_success3!");
+                        score += 30;
+                        UpdateScore();
                         //block_moveのisMatchingをtrueに
                         k = (int)block_matrix[j,i];
                         Debug.Log("success_block_no:"+k);                        
@@ -289,6 +302,8 @@ public class GameManager : MonoBehaviour
 
                     {
                         Debug.Log("width_success3!");
+                        score +=30;
+                        UpdateScore();
                         //block_moveのisMatchingをtrueに
                         k = (int)block_matrix[i,j];                        
                         script = blockList[k].GetComponent<Block_move>();
@@ -415,5 +430,17 @@ public class GameManager : MonoBehaviour
     void InactiveImage()
     {
         start_text.SetActive(false);
+    }
+    void UpdateScore()
+    {
+        scoreText.GetComponent<Text>().text = score.ToString();
+
+        if (score > hi_score) 
+        {
+            hi_score = score;
+        } 
+
+        hi_scoreText.GetComponent<Text>().text = hi_score.ToString();
+
     }
 }
