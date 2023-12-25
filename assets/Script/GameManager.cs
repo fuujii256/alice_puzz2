@@ -1,10 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-using System.Collections.Generic;   
-
+ 
 public class GameManager : MonoBehaviour
 {
     //public GameObject Block_1;
@@ -29,11 +27,15 @@ public class GameManager : MonoBehaviour
     int mat_x;
     int mat_y;
     int temp_cnt;
-    static public int Advent_num = 1;  //新規生成するブロックの背番号 0:wall 1:None 2:～ブロック
+    float temp_x;
+    float temp_y;
+    
+    static public int Advent_num = 0;  //新規生成するブロックの背番号 0:wall 1:None 2:～ブロック
     
     static public int trigger = 0;
     public bool all_seishi = false; //全てのオブジェクトが静止しているか？
     public List<GameObject> blockList = new List<GameObject>();   //管理するブロックのリスト
+    public List<GameObject> deleteList = new List<GameObject>();  //消去するブロックのリスト
     static public int [,] block_matrix = new int [11,8]{
         {1,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,1},
@@ -47,6 +49,20 @@ public class GameManager : MonoBehaviour
         {1,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1}
     }; 
+
+    static public int [,] block_matrix_tag = new int [11,8]{
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1}
+    };    
 
     // Start is called before the first frame update
     void Start()
@@ -78,7 +94,6 @@ public class GameManager : MonoBehaviour
             int i = 0;
             while(i<1)    //同時生成するブロックの数
             {
-                Advent_num++;  //生成するブロックの背番号を更新　　0:wall 1:None 2:～ブロック
 
                 int rnd = Random.Range(1, 5);
                 float x = -3.5f+ i*0.5f;
@@ -108,7 +123,8 @@ public class GameManager : MonoBehaviour
                 }   
                 block = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0));
                 Block_move component = block.AddComponent<Block_move>();
-                component.advent_no = Advent_num;    //出現させるのは何個目のブロックか指定する  
+                component.advent_no = Advent_num;    //出現させるのは何個目のブロックか
+                component.advent_type = rnd +1;    //出現させるブロックの種類  
             
                 blockList.Add(block);
                 player_control = true;
@@ -116,6 +132,7 @@ public class GameManager : MonoBehaviour
                 i++; 
             }     
             
+            Advent_num++;  //生成するブロックの背番号を更新　　0:wall 1:None 2:～ブロック
 
         }
 
@@ -129,34 +146,37 @@ public class GameManager : MonoBehaviour
         //y上端： 3.2847
 
         //マトリクス上の現在位置を取得
-        float temp_x = ( blockList[list_num].transform.position.x +5.75f )/0.75f;
-        mat_x = (int)temp_x;
-        float temp_y = 10.0f - (blockList[list_num].transform.position.y +4.175f )/0.75f;
-        mat_y = (int)temp_y;
-
-        //動作対象のブロックを左右に動かす
-        if (player_control == true && axisH != axisH_old)
+        if ( blockList[list_num] !=null ) 
         {
-            if (block_matrix[mat_y , mat_x + axisH ] == 0)
+            temp_x = ( blockList[list_num].transform.position.x +5.75f )/0.75f;
+            mat_x = (int)temp_x;
+            temp_y = 10.0f - (blockList[list_num].transform.position.y +4.175f )/0.75f;  //origin4.175f
+            mat_y = (int)temp_y;
+
+            //動作対象のブロックを左右に動かす
+            if (player_control == true && axisH != axisH_old)
             {
-                blockList[list_num].transform.Translate (0.75f*axisH, 0, 0);   //指定したブロックを動かす
-            }
-        }
-
-        axisH_old = axisH;
-
-        //下が押されたら強制落下させる
-        axisV =(int)Input.GetAxisRaw("Vertical");
-        if(axisV_old != axisV)
-        {
-            if ( axisV == -1 && player_control == true )
+                if (block_matrix_tag[mat_y , mat_x + axisH ] == 0)
                 {
-                    script = blockList[list_num].GetComponent<Block_move>();
-                    script.rakka = true;     //落下モードにさせる 
-                    player_control = false;
+                    blockList[list_num].transform.Translate (0.75f*axisH, 0, 0);   //指定したブロックを動かす
                 }
+            }
+
+            axisH_old = axisH;
+
+            //下が押されたら強制落下させる
+            axisV =(int)Input.GetAxisRaw("Vertical");
+            if(axisV_old != axisV)
+            {
+                if ( axisV == -1 && player_control == true )
+                    {
+                        script = blockList[list_num].GetComponent<Block_move>();
+                        script.rakka = true;     //落下モードにさせる 
+                        player_control = false;
+                    }
+            }
+            axisV_old = axisV;
         }
-        axisV_old = axisV;
 
         //ブロックが全て静止したか確認する。ー＞ブロック消去フェーズへ
         if ( trigger == 1 )
@@ -165,14 +185,17 @@ public class GameManager : MonoBehaviour
             int i = 0;
             while ( i< blockList.Count )
             {
-                script = blockList[i].GetComponent<Block_move>();
-                if (script.seishi = true)
+                if (blockList[i] != null) 
                 {
-                    all_seishi = true;                    
-                }
-                else 
-                {
-                    all_seishi = false;
+                    script = blockList[i].GetComponent<Block_move>();
+                    if (script.seishi == true)
+                    {
+                        all_seishi = true;                    
+                    }
+                    else 
+                    {
+                        all_seishi = false;
+                    }
                 }
                 i++;
             }
@@ -180,7 +203,7 @@ public class GameManager : MonoBehaviour
                 {
                     trigger = 2;
                     temp_cnt=50;            //ブロックが静止してからの待機時間
-                    Debug.Log("trigger:"+trigger);
+                    //Debug.Log("trigger:"+trigger);
                 }
     
         }
@@ -189,27 +212,165 @@ public class GameManager : MonoBehaviour
         {
             temp_cnt--;
             if (temp_cnt <= 0) {
-                ini_block = true;
+                //ini_block = true;
                 trigger = 3;
             }
         }
-        if (trigger == 3)
+        if (trigger == 3)           //３つ並んでいるか、チェックを開始する
         {
-            
-        }
+            //下の行からヨコのつながりを確認
+            int k = 0;
+            for (int i = 0; i < block_matrix.GetLength(1); i++)
 
+            {
 
-        //For Debug
-        if (block.GetComponent<Rigidbody2D>().IsSleeping()) {
-                //Debug.Log(block_matrix.ToString());
-                //Debug.Log("sleeping...");
+                //右から２つ目以降は確認不要（width-2）
+
+                for (int j = 0; j < block_matrix.GetLength(0)-2; j++)
+
+                {
+
+                    //同じタグのキャンディが３つ並んでいたら。Ｘ座標がｊなので注意。
+
+　　　　    //念のため、ふたつの式それぞれをカッコで囲んでいる。
+
+                    if ((block_matrix_tag[j,i] > 1) && (block_matrix_tag[j,i] == block_matrix_tag[j+1,i]) && (block_matrix_tag[j, i] == block_matrix_tag[j + 2, i]))
+
+                    {
+                        Debug.Log("height_success3!");
+                        //block_moveのisMatchingをtrueに
+                        k = (int)block_matrix[j,i];
+                        Debug.Log("success_block_no:"+k);                        
+                        Block_move script1 = blockList[k].GetComponent<Block_move>();
+                        script1.isMatching = true;
+
+                        k = (int)block_matrix[j+1,i]; 
+                        Debug.Log("success_block_no:"+k);   
+                        Block_move script2 = blockList[k].GetComponent<Block_move>();
+                        script2.isMatching = true;
+
+                        k = (int)block_matrix[j+2,i]; 
+                        Debug.Log("success_block_no:"+k);    
+                        Block_move script3 = blockList[k].GetComponent<Block_move>();
+                        script3.isMatching = true;
+                    }
+
+                }
+
+            }
+
+            //同様にｘ方向もチェック
+            for (int i = 0; i < block_matrix.GetLength(0); i++)
+
+            {
+
+                //右から２つ目以降は確認不要（width-2）
+
+                for (int j = 0; j < block_matrix.GetLength(1)-2; j++)
+
+                {
+
+                    //同じタグのキャンディが３つ並んでいたら。Ｘ座標がｊなので注意。
+
+　　　　    //念のため、ふたつの式それぞれをカッコで囲んでいる。
+
+                    if ((block_matrix_tag[i,j] > 1) && (block_matrix_tag[i,j] == block_matrix_tag[i,j+1]) && (block_matrix_tag[i, j] == block_matrix_tag[i , j +2]))
+
+                    {
+                        Debug.Log("width_success3!");
+                        //block_moveのisMatchingをtrueに
+                        k = (int)block_matrix[i,j];                        
+                        script = blockList[k].GetComponent<Block_move>();
+                        script.isMatching = true;
+
+                        k = (int)block_matrix[i,j+1];   
+                        script = blockList[k].GetComponent<Block_move>();
+                        script.isMatching = true;
+
+                        k = (int)block_matrix[i,j+2];    
+                        script = blockList[k].GetComponent<Block_move>();
+                        script.isMatching = true;
+                    }
+
+                }
+
+            }
+
+            //isMatching=trueのものをＬｉｓｔに入れる
+
+            foreach (var item in blockList)
+            {
+                if (item != null)
+                {
+                    if (item.GetComponent<Block_move>().isMatching == true)
+                        {
+                            deleteList.Add(item);
+                        }
+                }        
+            }
+
+            Debug.Log("消去可能なブロック数："+deleteList.Count);
+
+            if (deleteList.Count>0)         //消去可能なブロックはあるか？
+            {
+                //該当する配列をnullにして（内部管理）、キャンディを消去する（見た目）。
+                foreach (var item in deleteList)
+                {
+                    temp_x = ( item.transform.position.x +5.75f )/0.75f;
+                    mat_x = (int)temp_x;
+                    temp_y = 10.0f - ( item.transform.position.y +4.175f )/0.75f;  //origin4.175f
+                    mat_y = (int)temp_y;
+
+                    Debug.Log("mat_x : mat_y:"+ mat_x +":"+ mat_y);
+                    block_matrix[(int)mat_y, (int)mat_x] = 0;
+                    block_matrix_tag[(int)mat_y, (int)mat_x] = 0;
+                    
+                    Destroy(item);
+                }
             }
             else
             {
-                //Debug.Log("block mooving");
+                trigger = 0;            //もう消去可能なブロックがなければ、通常処理へ
             }
 
+            deleteList.Clear();         //消去処理が完了したら、リストをクリアする
+            trigger = 4; 
+            temp_cnt = 50;               //消去後はしばらく休止
+        }
+
+        if (trigger == 4)           //ブロック消去チェック後は小休止
+        {
+            temp_cnt--;
+            if (temp_cnt <= 0) {
+                ini_block = true;
+                trigger = 1;            //もう一度全数静止チェックからやり直す
+            }
+
+        }
+        //For Debug
+        //if (block.GetComponent<Rigidbody2D>().IsSleeping()) {
+                //Debug.Log(block_matrix.ToString());
+                //Debug.Log("sleeping...");
+            //}
+            //else
+            //{
+                //Debug.Log("block mooving");
+            //}
+
         if ( Input.GetKeyDown(KeyCode.Space)) {   //ブロックマトリクスを表示
+            //block_matrix.tagを表示
+            Debug.Log("block_matrix.tagを表示");
+            for (int i = 0;i < block_matrix.GetLength(0);i++)
+            {                
+                string str = "";
+                for (int j = 0; j < block_matrix.GetLength(1); j++)
+                {
+                    str = str + block_matrix_tag[i, j] + " ";
+                }
+                Debug.Log(str);
+            }
+            //block_matrixを表示
+            Debug.Log("block_matrixを表示");
             for (int i = 0;i < block_matrix.GetLength(0);i++)
             {                
                 string str = "";
@@ -219,6 +380,7 @@ public class GameManager : MonoBehaviour
                 }
                 Debug.Log(str);
             }
+            
         }       
 
     }

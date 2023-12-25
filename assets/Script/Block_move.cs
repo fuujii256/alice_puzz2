@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,12 +6,14 @@ public class Block_move : MonoBehaviour
 {
     Rigidbody2D rbody;
     public int advent_no;
+    public int advent_type;
     public int axisH;
     public int axisV;
     public bool rakka = false;   //落下モードの場合はtrue
+    public bool isMatching = false;
     public bool player_freeze;  
-    int axisH_old = 0;
-    int axisV_old = 0;
+    //int axisH_old = 0;
+    //int axisV_old = 0;
 
     int mat_x;
     int mat_y;
@@ -46,7 +48,10 @@ public class Block_move : MonoBehaviour
         
         //Debug.Log("x:"+mat_x+" y:"+mat_y);
         GameManager.block_matrix [old_mat_y,old_mat_x] = 0;
-        GameManager.block_matrix [mat_y,mat_x] = advent_no;    //ブロックマトリクスに自分の番号を記録する 
+        GameManager.block_matrix [mat_y,mat_x] = advent_no;    //ブロックマトリクスに自分の番号を記録する
+
+        GameManager.block_matrix_tag [old_mat_y,old_mat_x] = 0;
+        GameManager.block_matrix_tag [mat_y,mat_x] = advent_type;    //ブロックマトリクス＜タグ＞に自分のタイプを記録する  
         old_mat_x= mat_x;
         old_mat_y= mat_y;
 
@@ -104,6 +109,6 @@ public class Block_move : MonoBehaviour
     {
         GameManager.player_control = false;
         GameManager.trigger =1; 
-        Debug.Log("GameManager.trigger:"+GameManager.trigger);              //　衝突判定開始フラグをたてる
+        //Debug.Log("GameManager.trigger:"+GameManager.trigger);              //　衝突判定開始フラグをたてる
     }
 }
