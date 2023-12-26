@@ -146,6 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b07fe01ef4addb44808a5e05e2ee907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  block_rakka: {fileID: 8300000, guid: 773ec89f162ad9a48951ba6eaad1ff30, type: 3}
   advent_no: 0
   advent_type: 0
   axisH: 0

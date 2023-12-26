@@ -5,18 +5,30 @@ using UnityEngine.UI;
  
 public class GameManager : MonoBehaviour
 {
+    //// カメラに写っていないときに呼ばれる関数
+    //void OnBecameInvisible (){
+    //    GameObject.Destroy(this.gameObject);
+    //}
+
     public GameObject UnderWall;
     public GameObject GameOver;
     public GameObject start_text;
     public GameObject go_title;
     public GameObject scoreText;
     public GameObject hi_scoreText;
+    public GameObject star_light;
+    //public GameObject star_light2;
+    //public GameObject star_light3;
+    //public GameObject star_light4;
 
     public AudioClip meGameStart;
     public AudioClip meGamePlaying;
     public AudioClip meGameOver;
+    public AudioClip block_erase;
+    public AudioClip block_move;
+    public AudioClip block_rakka;
 
-    private GameObject block; 
+    GameObject block; 
 
     //float game_Time = 0.0f;
     //float game_Time_Cnt = 0.0f;
@@ -34,8 +46,11 @@ public class GameManager : MonoBehaviour
     float temp_x;
     float temp_y;
 
-    public static int hi_score;
+    static public int hi_score;
     public int score = 0;
+
+    static public int next_block;     
+    int first_block;
     
     static public int Advent_num = 0;  //新規生成するブロックの背番号 0:wall 1:None 2:～ブロック
     
@@ -76,7 +91,10 @@ public class GameManager : MonoBehaviour
     {
         GameOver.SetActive(false);  //ゲームオーバー文字を消す
         go_title.SetActive(false);  //タイトル画面へ戻るボタンを消す
-        
+
+        //初期のNEXTブロックの値をつくる
+        next_block = Random.Range(1, 5);
+;
         if (hi_score == 0)
         {
             hi_score = 100;  //ハイスコアの初期値
@@ -118,8 +136,10 @@ public class GameManager : MonoBehaviour
             int i = 0;
             while(i<1)    //同時生成するブロックの数
             {
+                first_block = next_block;
+                next_block = Random.Range(1, 5);
+                // nextblockを表示
 
-                int rnd = Random.Range(1, 5);
                 float x = -3.5f+ i*0.5f;
                 float y = 3.24f;
                 float z = 0.0f;
@@ -127,7 +147,7 @@ public class GameManager : MonoBehaviour
 
                 GameObject new_instance = block_1_Prefab;
         
-                switch(rnd)
+                switch(first_block)
                 {
                     case 1:
                         new_instance = block_1_Prefab;
@@ -151,7 +171,7 @@ public class GameManager : MonoBehaviour
                     block = Instantiate(new_instance,v3, Quaternion.Euler(0, 0, 0));
                     Block_move component = block.AddComponent<Block_move>();
                     component.advent_no = Advent_num;    //出現させるのは何個目のブロックか
-                    component.advent_type = rnd +1;    //出現させるブロックの種類  
+                    component.advent_type = first_block +1;    //出現させるブロックの種類  
             
                     blockList.Add(block);
                     player_control = true;
@@ -195,11 +215,18 @@ public class GameManager : MonoBehaviour
             {
                 if (block_matrix_tag[mat_y , mat_x + axisH ] == 0)
                 {
+
+                    AudioSource soundPlayer = GetComponent<AudioSource>();
+                    if(soundPlayer != null)
+                    {
+                        soundPlayer.PlayOneShot(block_move);
+                    }
+
                     blockList[list_num].transform.Translate (0.75f*axisH, 0, 0);   //指定したブロックを動かす
                 }
             }
 
-            axisH_old = axisH;
+            
 
             //下が押されたら強制落下させる
             axisV =(int)Input.GetAxisRaw("Vertical");
@@ -212,6 +239,7 @@ public class GameManager : MonoBehaviour
                         player_control = false;
                     }
             }
+            axisH_old = axisH;
             axisV_old = axisV;
         }
 
@@ -237,10 +265,16 @@ public class GameManager : MonoBehaviour
                 i++;
             }
             if (all_seishi == true)
+            {
+                AudioSource soundPlayer = GetComponent<AudioSource>();
+                if(soundPlayer != null)
                 {
-                    trigger = 2;
-                    temp_cnt=10;            //ブロックが静止してからの待機時間
-                    //Debug.Log("trigger:"+trigger);
+                    soundPlayer.PlayOneShot(block_rakka);
+                }
+                trigger = 2;
+                temp_cnt=10;            //ブロックが静止してからの待機時間
+                //Debug.Log("trigger:"+trigger);
+
                 }
     
         }
@@ -271,31 +305,104 @@ public class GameManager : MonoBehaviour
 
 　　　　    //念のため、ふたつの式それぞれをカッコで囲んでいる。
 
-                    if ((block_matrix_tag[j,i] > 1) && (block_matrix_tag[j,i] == block_matrix_tag[j+1,i]) && (block_matrix_tag[j, i] == block_matrix_tag[j + 2, i]))
+                    if ((block_matrix_tag[j,i] > 1) && (block_matrix_tag[j,i] == block_matrix_tag[j+1,i]) )
 
                     {
-                        Debug.Log("height_success3!");
-                        score += 30;
-                        UpdateScore();
-                        //block_moveのisMatchingをtrueに
-                        k = (int)block_matrix[j,i];
-                        Debug.Log("success_block_no:"+k);                        
-                        Block_move script1 = blockList[k].GetComponent<Block_move>();
-                        script1.isMatching = true;
+                        if (block_matrix_tag[j, i] == block_matrix_tag[j + 2, i])
+                        {
+                            Debug.Log("height_success3!");
+                            score += 30;
+                            UpdateScore();
+                            //block_moveのisMatchingをtrueに
+                            k = (int)block_matrix[j,i];
+                            Debug.Log("success_block_no:"+k);                        
+                            Block_move script1 = blockList[k].GetComponent<Block_move>();
+                            script1.isMatching = true;
 
-                        k = (int)block_matrix[j+1,i]; 
-                        Debug.Log("success_block_no:"+k);   
-                        Block_move script2 = blockList[k].GetComponent<Block_move>();
-                        script2.isMatching = true;
+                            k = (int)block_matrix[j+1,i]; 
+                            Debug.Log("success_block_no:"+k);   
+                            Block_move script2 = blockList[k].GetComponent<Block_move>();
+                            script2.isMatching = true;
 
-                        k = (int)block_matrix[j+2,i]; 
-                        Debug.Log("success_block_no:"+k);    
-                        Block_move script3 = blockList[k].GetComponent<Block_move>();
-                        script3.isMatching = true;
+                            k = (int)block_matrix[j+2,i]; 
+                            Debug.Log("success_block_no:"+k);    
+                            Block_move script3 = blockList[k].GetComponent<Block_move>();
+                            script3.isMatching = true;
+                        }
+                        else
+                        {
+                            if (block_matrix_tag[j, i] == block_matrix_tag[j + 1, i +1])
+                            {
+                                Debug.Log("height L1_success3!");
+                                score += 30;
+                                UpdateScore();
+                                //block_moveのisMatchingをtrueに
+                                k = (int)block_matrix[j,i];
+                                Debug.Log("success_block_no:"+k);                        
+                                Block_move script1 = blockList[k].GetComponent<Block_move>();
+                                script1.isMatching = true;
+
+                                k = (int)block_matrix[j+1,i]; 
+                                Debug.Log("success_block_no:"+k);   
+                                Block_move script2 = blockList[k].GetComponent<Block_move>();
+                                script2.isMatching = true;
+
+                                k = (int)block_matrix[j+1,i+1]; 
+                                Debug.Log("success_block_no:"+k);    
+                                Block_move script3 = blockList[k].GetComponent<Block_move>();
+                                script3.isMatching = true;
+                            }    
+                            else
+                            {
+                                if (block_matrix_tag[j, i] == block_matrix_tag[j + 1, i -1])
+                                {
+                                    Debug.Log("height L2_success3!");
+                                    score += 30;
+                                    UpdateScore();
+                                    //block_moveのisMatchingをtrueに
+                                    k = (int)block_matrix[j,i];
+                                    Debug.Log("success_block_no:"+k);                        
+                                    Block_move script1 = blockList[k].GetComponent<Block_move>();
+                                    script1.isMatching = true;
+
+                                    k = (int)block_matrix[j+1,i]; 
+                                    Debug.Log("success_block_no:"+k);   
+                                    Block_move script2 = blockList[k].GetComponent<Block_move>();
+                                    script2.isMatching = true;
+
+                                    k = (int)block_matrix[j+1,i-1]; 
+                                    Debug.Log("success_block_no:"+k);    
+                                    Block_move script3 = blockList[k].GetComponent<Block_move>();
+                                    script3.isMatching = true;
+                                }
+                                else
+                                {
+                                    if (block_matrix_tag[j, i] == block_matrix_tag[j , i +1])
+                                    {
+                                        Debug.Log("height LSP_success3!");
+                                        score += 30;
+                                        UpdateScore();
+                                        //block_moveのisMatchingをtrueに
+                                        k = (int)block_matrix[j,i];
+                                        Debug.Log("success_block_no:"+k);                        
+                                        Block_move script1 = blockList[k].GetComponent<Block_move>();
+                                        script1.isMatching = true;
+
+                                        k = (int)block_matrix[j+1,i]; 
+                                        Debug.Log("success_block_no:"+k);   
+                                        Block_move script2 = blockList[k].GetComponent<Block_move>();
+                                        script2.isMatching = true;
+
+                                        k = (int)block_matrix[j,i+1]; 
+                                        Debug.Log("success_block_no:"+k);    
+                                        Block_move script3 = blockList[k].GetComponent<Block_move>();
+                                        script3.isMatching = true;
+                                    }
+                                }
+                            }
+                        }       
                     }
-
-                }
-
+                }    
             }
 
             //同様にｘ方向もチェック
@@ -313,24 +420,71 @@ public class GameManager : MonoBehaviour
 
 　　　　    //念のため、ふたつの式それぞれをカッコで囲んでいる。
 
-                    if ((block_matrix_tag[i,j] > 1) && (block_matrix_tag[i,j] == block_matrix_tag[i,j+1]) && (block_matrix_tag[i, j] == block_matrix_tag[i , j +2]))
+                    if ((block_matrix_tag[i,j] > 1) && (block_matrix_tag[i,j] == block_matrix_tag[i,j+1]) )
 
                     {
-                        Debug.Log("width_success3!");
-                        score +=30;
-                        UpdateScore();
-                        //block_moveのisMatchingをtrueに
-                        k = (int)block_matrix[i,j];                        
-                        script = blockList[k].GetComponent<Block_move>();
-                        script.isMatching = true;
+                        if (block_matrix_tag[i, j] == block_matrix_tag[i , j +2])
+                        {
+                            Debug.Log("width_success3!");
+                            score +=30;
+                            UpdateScore();
+                            //block_moveのisMatchingをtrueに
+                            k = (int)block_matrix[i,j];                        
+                            script = blockList[k].GetComponent<Block_move>();
+                            script.isMatching = true;
 
-                        k = (int)block_matrix[i,j+1];   
-                        script = blockList[k].GetComponent<Block_move>();
-                        script.isMatching = true;
+                            k = (int)block_matrix[i,j+1];   
+                            script = blockList[k].GetComponent<Block_move>();
+                            script.isMatching = true;
 
-                        k = (int)block_matrix[i,j+2];    
-                        script = blockList[k].GetComponent<Block_move>();
-                        script.isMatching = true;
+                            k = (int)block_matrix[i,j+2];    
+                            script = blockList[k].GetComponent<Block_move>();
+                            script.isMatching = true;
+                        }
+                        else
+                        {
+                            if (block_matrix_tag[i, j] == block_matrix_tag[i+1 , j +1])
+                            {
+                                Debug.Log("width_L3_success3!");
+                                score +=30;
+                                UpdateScore();
+                                //block_moveのisMatchingをtrueに
+                                k = (int)block_matrix[i,j];                        
+                                script = blockList[k].GetComponent<Block_move>();
+                                script.isMatching = true;
+
+                                k = (int)block_matrix[i,j+1];   
+                                script = blockList[k].GetComponent<Block_move>();
+                                script.isMatching = true;
+
+                                k = (int)block_matrix[i+1,j+1];    
+                                script = blockList[k].GetComponent<Block_move>();
+                                script.isMatching = true;
+                            }
+                            else
+                            {
+                                if (block_matrix_tag[i, j] == block_matrix_tag[i-1 , j +1])
+                                {
+                                    Debug.Log("width_L4_success3!");
+                                    score +=30;
+                                    UpdateScore();
+                                    //block_moveのisMatchingをtrueに
+                                    k = (int)block_matrix[i,j];                        
+                                    script = blockList[k].GetComponent<Block_move>();
+                                    script.isMatching = true;
+
+                                    k = (int)block_matrix[i,j+1];   
+                                    script = blockList[k].GetComponent<Block_move>();
+                                    script.isMatching = true;
+
+                                    k = (int)block_matrix[i-1,j+1];    
+                                    script = blockList[k].GetComponent<Block_move>();
+                                    script.isMatching = true;
+                                }
+                            }    
+                            
+                        }
+                        
                     }
 
                 }
@@ -354,9 +508,17 @@ public class GameManager : MonoBehaviour
 
             if (deleteList.Count>0)         //消去可能なブロックはあるか？
             {
+                AudioSource soundPlayer = GetComponent<AudioSource>();
+                if(soundPlayer != null)
+                {
+                    soundPlayer.PlayOneShot(block_erase);
+                }
+
                 //該当する配列をnullにして（内部管理）、キャンディを消去する（見た目）。
                 foreach (var item in deleteList)
                 {
+                                       
+                    
                     temp_x = ( item.transform.position.x +5.75f )/0.75f;
                     mat_x = (int)temp_x;
                     temp_y = 10.0f - ( item.transform.position.y +4.175f )/0.75f;  //origin4.175f
@@ -382,12 +544,34 @@ public class GameManager : MonoBehaviour
             temp_cnt = 30;               //消去後はしばらく休止
         }
 
-        if (trigger == 4)           //ブロック消去チェック後は小休止
+        if (trigger == 4)           //ブロック消去チェック後は 全てのブロックが静止するまでまつ
         {
-            temp_cnt--;
-            if (temp_cnt <= 0) {
-                ini_block = true;
-                trigger = 1;            //もう一度全数静止チェックからやり直す
+            //temp_cnt--;
+            //if (temp_cnt <= 0) {
+            //    ini_block = true;
+            //    trigger = 1;            
+            //}
+            all_seishi = true;
+            int i = 0;
+            while ( i< blockList.Count )
+            {
+                if (blockList[i] != null) 
+                {
+                    bool temp_sleep = blockList[i].GetComponent<Rigidbody2D>().IsSleeping();
+                    if ( temp_sleep == false)
+                    {
+                        all_seishi = false;                    
+                    }
+                }
+                i++;
+            }
+            if (all_seishi == true)
+            {
+                trigger = 1;
+                ini_block = true;           //初期ブロックを作成し。通常モードへ
+
+
+
             }
 
         }
@@ -458,4 +642,7 @@ public class GameManager : MonoBehaviour
         hi_scoreText.GetComponent<Text>().text = hi_score.ToString();
 
     }
+
+    
+
 }

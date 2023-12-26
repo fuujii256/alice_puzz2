@@ -5,6 +5,7 @@ using UnityEngine;
 public class Block_move : MonoBehaviour
 {
     Rigidbody2D rbody;
+  
     public int advent_no;
     public int advent_type;
     public int axisH;
@@ -107,6 +108,14 @@ public class Block_move : MonoBehaviour
     //衝突した時に、一度だけ実行する
     void OnCollisionEnter2D(Collision2D coll) 
     {
+
+        //AudioSource soundPlayer = GetComponent<AudioSource>();
+        //if(soundPlayer != null)
+        //{
+        //    soundPlayer.Stop();
+        //    soundPlayer.PlayOneShot(block_rakka);
+        //}
+
         GameManager.player_control = false;
         GameManager.trigger =1; 
         //Debug.Log("GameManager.trigger:"+GameManager.trigger);              //　衝突判定開始フラグをたてる
