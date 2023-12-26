@@ -5,7 +5,12 @@ using UnityEngine;
 public class Block_move : MonoBehaviour
 {
     Rigidbody2D rbody;
-  
+    Animator animator;
+    public string block_matataki;
+    public string block_matataki_stop;
+    //string nowAnime = "";
+    //string oldAnime = "";
+
     public int advent_no;
     public int advent_type;
     public int axisH;
@@ -16,12 +21,20 @@ public class Block_move : MonoBehaviour
     //int axisH_old = 0;
     //int axisV_old = 0;
 
+    int live_cnt;           //オブジェクトが生成されてからの時間
     int mat_x;
     int mat_y;
     int old_mat_x;
     int old_mat_y;
     public bool seishi = false;   //このオブジェクトが静止しているか
-     public bool moveButtonJudge = false;  
+    public bool moveButtonJudge = false;  
+
+    GameObject child_nomal;
+    GameObject child_smile;
+    GameObject child_odoroki;
+    GameObject child_awate;
+
+
     Vector3 movePosition;
     
     // Start is called before the first frame update
@@ -30,6 +43,18 @@ public class Block_move : MonoBehaviour
         //Rigidbodyを取得
         rbody = this.GetComponent<Rigidbody2D>();
 
+        animator = GetComponent<Animator>();
+
+        //子オブジェクト（表情）を取得して初期化
+        child_smile = gameObject.transform.GetChild(1).gameObject;
+        child_nomal = gameObject.transform.GetChild(2).gameObject;
+        child_odoroki = gameObject.transform.GetChild(3).gameObject;
+        child_awate = gameObject.transform.GetChild(4).gameObject;
+
+        child_smile.SetActive (true);  //最初はスマイル
+        child_nomal.SetActive (false);
+        child_odoroki.SetActive (false);
+        child_awate.SetActive (false);
 
         //FreezePositionXをオンにする
         rbody.constraints = RigidbodyConstraints2D.FreezePositionX; 
@@ -40,6 +65,52 @@ public class Block_move : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {   
+        //アニメーション（またたき）させる
+        //int rnd = Random.Range(1, 10);
+        
+        //if (rnd == 5)
+        //{
+        //    nowAnime = block_matataki;
+        //}
+        //else
+        //{
+        //    nowAnime = block_matataki_stop;
+        //}
+
+        //if (nowAnime != oldAnime)
+        //{
+        //    oldAnime = nowAnime;
+        //    animator.Play(nowAnime);
+        //}
+
+        live_cnt++;
+
+
+        if (rakka){
+            child_awate.SetActive (true); 
+            child_smile.SetActive (false);  
+            child_nomal.SetActive (false);
+            //child_odoroki.SetActive (false);
+        }
+        else 
+        {
+           if (live_cnt>1000)
+           {
+                child_nomal.SetActive (true);
+                child_awate.SetActive (false); 
+                child_smile.SetActive (false);  
+                //child_odoroki.SetActive (false); 
+           }
+           else
+           {
+                child_smile.SetActive (true);
+                child_awate.SetActive (false);  
+                child_nomal.SetActive (false);
+                //child_odoroki.SetActive (false);      
+           }
+        }
+
+        //現在の自身の座標を取得
         Vector3 pos = this.transform.position;
 
         float temp_x = (pos.x +5.00f)/0.75f +1.0f;  //ブロックマトリクスの自分の座標を計算 

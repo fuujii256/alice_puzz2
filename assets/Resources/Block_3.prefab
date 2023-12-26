@@ -177,6 +177,7 @@ GameObject:
   - component: {fileID: 5600767476167972673}
   - component: {fileID: 5600767476167972672}
   - component: {fileID: 7328098966458660593}
+  - component: {fileID: 9156803768814018958}
   m_Layer: 0
   m_Name: Block_3
   m_TagString: 3
@@ -310,6 +311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b07fe01ef4addb44808a5e05e2ee907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  block_matataki: 
+  block_matataki_stop: 
   advent_no: 0
   advent_type: 0
   axisH: 0
@@ -319,3 +322,22 @@ MonoBehaviour:
   player_freeze: 0
   seishi: 0
   moveButtonJudge: 0
+--- !u!95 &9156803768814018958
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5600767476167972684}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 952a1f626c1ae4045854f1ab16f4fbb3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

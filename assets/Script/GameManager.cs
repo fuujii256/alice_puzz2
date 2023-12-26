@@ -5,7 +5,7 @@ using UnityEngine.UI;
  
 public class GameManager : MonoBehaviour
 {
-    //// カメラに写っていないときに呼ばれる関数
+    // カメラに写っていないときに呼ばれる関数
     //void OnBecameInvisible (){
     //    GameObject.Destroy(this.gameObject);
     //}
@@ -120,10 +120,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame  
     void FixedUpdate()
     {
-        GameObject block_1_Prefab = Resources.Load<GameObject>("Block_1");
-        GameObject block_2_Prefab = Resources.Load<GameObject>("Block_2");
-        GameObject block_3_Prefab = Resources.Load<GameObject>("Block_3");
-        GameObject block_4_Prefab = Resources.Load<GameObject>("Block_4");
+        GameObject block_1_Prefab = Resources.Load<GameObject>("block1");
+        GameObject block_2_Prefab = Resources.Load<GameObject>("block2");
+        GameObject block_3_Prefab = Resources.Load<GameObject>("block3");
+        GameObject block_4_Prefab = Resources.Load<GameObject>("block4");
         GameObject block_5_Prefab = Resources.Load<GameObject>("Block_5");
 
         //game_Time_Cnt += Time.deltaTime;
