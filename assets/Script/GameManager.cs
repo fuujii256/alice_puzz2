@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
     float temp_x;
     float temp_y;
 
+    static public int game_level;
+
     static public int hi_score;
     public int score = 0;
 
@@ -89,6 +91,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        game_level = 0;         //初期のゲームレベル（落下の加速値）
+
         GameOver.SetActive(false);  //ゲームオーバー文字を消す
         go_title.SetActive(false);  //タイトル画面へ戻るボタンを消す
 
@@ -184,7 +188,7 @@ public class GameManager : MonoBehaviour
                     soundPlayer.Stop();
                     soundPlayer.PlayOneShot(meGameOver);
                 
-                    Physics.gravity = new Vector3(0, -10, 0);  //重力を加える
+                    Physics2D.gravity = new Vector3(0, -100, 0);  //重力を加える
                 }
                 i++; 
             }     
@@ -535,6 +539,8 @@ public class GameManager : MonoBehaviour
             {
                 //ブロック消去ルーチン完了時の処理 
                 trigger = 0;  //もう消去可能なブロックがなければ、通常処理へ 
+                game_level++;   //ゲームレベルを上げる
+                Physics2D.gravity = new Vector3(0, -5*game_level, 0);  //重力を加える
             }
 
             

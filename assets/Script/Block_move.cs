@@ -85,7 +85,7 @@ public class Block_move : MonoBehaviour
         {
             rakka = false; 
             rbody.drag = 0;             //下ボタンが押されたら、強制落下
-            Vector3 force = new Vector3 (0.0f,-400.0f,0.0f);    // 力を設定
+            Vector3 force = new Vector3 (0.0f,-800.0f,0.0f);    // 力を設定
             rbody.AddForce (force);         // 力を加える
   
         }
